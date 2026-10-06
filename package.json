@@ -1,0 +1,36 @@
+{
+  "name": "evidencelock",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3321",
+    "build": "next build",
+    "start": "next start -p 3321",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "genlayer": "npx --no-install genlayer",
+    "preflight": "python scripts/preflight.py"
+  },
+  "dependencies": {
+    "genlayer-js": "1.1.8",
+    "next": "16.3.8",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "zod": "4.1.12"
+  },
+  "devDependencies": {
+    "@types/node": "24.7.0",
+    "@types/react": "19.2.2",
+    "@types/react-dom": "19.2.1",
+    "eslint": "9.39.1",
+    "eslint-config-next": "16.3.8",
+    "genlayer": "0.39.1",
+    "typescript": "5.9.3",
+    "vitest": "4.0.18"
+  },
+  "overrides": {
+    "object.fromentries": "2.0.7",
+    "es-abstract": "1.23.9"
+  }
+}
