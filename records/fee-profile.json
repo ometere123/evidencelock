@@ -1,0 +1,51 @@
+{
+  "network": 61999,
+  "generated_at": "2026-10-06T17:26:24Z",
+  "paths": {
+    "deploy_evidence_vault": {
+      "estimated": null,
+      "observed": null,
+      "tx": ""
+    },
+    "deploy_claim_court": {
+      "estimated": null,
+      "observed": null,
+      "tx": ""
+    },
+    "capture_snapshot": {
+      "estimated": null,
+      "observed": null,
+      "tx": ""
+    },
+    "register_claim": {
+      "estimated": null,
+      "observed": null,
+      "tx": ""
+    },
+    "attach_snapshot": {
+      "estimated": null,
+      "observed": null,
+      "tx": ""
+    },
+    "fund_bounty": {
+      "estimated": null,
+      "observed": null,
+      "tx": ""
+    },
+    "adjudicate": {
+      "estimated": null,
+      "observed": null,
+      "tx": ""
+    },
+    "finalized_settle": {
+      "estimated": null,
+      "observed": null,
+      "tx": ""
+    },
+    "recover_bounty": {
+      "estimated": null,
+      "observed": null,
+      "tx": ""
+    }
+  }
+}

@@ -1,0 +1,6 @@
+pytest>=8.0,<9
+genlayer-test
+genlayer-py
+eth-account
+requests
+genvm-linter

@@ -1,0 +1,184 @@
+EVIDENCELOCK — MASTER FINISHING HANDOFF
+======================================
+
+I have already unzipped this EVIDENCELOCK package and opened this exact extracted folder in Codex.
+Do not clone another copy. Do not create a replacement working directory. Do not create the GitHub repository for me.
+
+Read this file first, then read:
+- README.md
+- docs/ARCHITECTURE.md
+- docs/SECURITY_MODEL.md
+- docs/REVIEWER_5X5X5.md
+- docs/LIVE_TEST_PLAN.md
+- docs/NETWORK_LOCK.md
+- contracts/evidence_vault.py
+- contracts/claim_court.py
+- reference/model.py
+- tests/unit/test_model.py
+- tests/static/test_contract_invariants.py
+- tests/direct/*
+- scripts/preflight.py
+
+PRODUCT DECISION IS FINISHED
+----------------------------
+Do not reopen ideation and do not redesign the protocol. The point is specifically to keep the public-claim/evidence/bounty lifecycle while eliminating the known 4/5 ceilings:
+
+1. no creator-selected authority domains;
+2. immutable consensus-captured source content before adjudication;
+3. no creator-controlled free-form adjudication framing or thresholds;
+4. smaller audit surface through EvidenceVault + ClaimCourt separation.
+
+Do not merge the two contracts back into one monolith.
+Do not add an application backend.
+Do not add Supabase, Firebase, Workers, Railway, Express, server databases, queues, cron jobs, centralized AI agents, authoritative Next.js API routes or authoritative Server Actions.
+
+NETWORK IS ABSOLUTE
+-------------------
+Stable GenLayer Studionet only:
+- chain ID: 61999
+- RPC: https://studio.genlayer.com/api
+- explorer: https://explorer-studio.genlayer.com
+- repository-local CLI: genlayer@0.39.1
+
+Never switch this work to 61997.
+Before every signing/deployment stage, verify the selected network and chain ID.
+Use `npm run genlayer -- ...` so the repository-pinned CLI is used. Do not silently use a global RC CLI.
+
+WALLET / FRONTEND
+-----------------
+Injected EIP-1193 only. EIP-6963 discovery is already present.
+No WalletConnect, Privy, WorkOS, embedded wallet or hardcoded user address.
+Wrong network must hard-block every write and visibly say 61999.
+Every transaction must expose its tx hash and explorer link.
+The UI must keep ACCEPTED and FINALIZED distinct; do not call an accepted adjudication final.
+No fake data in production routes.
+
+CONTRACT HARDENING
+------------------
+Audit both contracts against the currently installed stable GenLayer APIs and fix any runtime/linter incompatibilities without weakening the design.
+
+EvidenceVault invariants:
+- capture is the only place that accesses the live web;
+- accepted exact body is stored and hash-committed;
+- creator supplies no authority domains or authority role;
+- privileged publisher roles require independently checked, grounded identity evidence;
+- leader and validator independently retrieve/assess;
+- materially different captures must disagree/fail rather than silently choosing one;
+- a returned duplicate snapshot id must correspond to exactly the same subject/kind/url identity.
+
+ClaimCourt invariants:
+- no gl.nondet.web anywhere;
+- register_claim accepts no free-form predicate, adjudication statement, source policy, authority domains or thresholds;
+- claim statement and policy are protocol-owned;
+- attached snapshot subject key, claim kind, window and commitment are verified;
+- validator independently rereads the same immutable body;
+- decisive quote grounding is symmetric for SUPPORTS and CONTRADICTS;
+- deterministic code derives the verdict;
+- confirmation and refutation use the same source-quality floor;
+- payout ledger is zeroed before value leaves;
+- finalized message, not frontend opinion, triggers normal settlement;
+- manual settlement cannot bypass finality grace;
+- custody always balances.
+
+TESTING — DO NOT STOP EARLY
+---------------------------
+Run and make green:
+1. Python compile.
+2. `pytest tests/unit tests/static -q`.
+3. GenVM lint on BOTH contracts.
+4. Direct Mode for BOTH contracts.
+5. Expand and harden the included Direct Mode suite until every required hostile case below is executable and green:
+   - prompt injection inside source body;
+   - leader and validator see materially different page content;
+   - leader calls source official, validator calls it unknown;
+   - ungrounded identity quote;
+   - ungrounded support quote and ungrounded contradiction quote;
+   - same-host multi-URL independence attack;
+   - creator trying to make two weak sources satisfy ENTITY_STATUS;
+   - wrong subject key / wrong claim kind / outside-window snapshot;
+   - duplicate attach/capture behavior;
+   - stale/mutated live page after capture must not change adjudication because court reads stored body;
+   - confirmation/refutation threshold symmetry;
+   - conflict case;
+   - payout to earliest non-creator decisive contributor;
+   - creator evidence cannot self-pay bounty;
+   - double settlement;
+   - bounty recovery before grace;
+   - wrong chain hard fail;
+   - malformed validator output;
+   - validator disagreement writes no claim decision.
+6. Frontend lint/typecheck/tests/production build.
+7. `python scripts/preflight.py`.
+8. CI on GitHub, all required jobs green.
+
+Do not weaken a test just to make it pass. Fix the product.
+
+DEPLOYMENT — FRESH PROOF ONLY
+-----------------------------
+Deploy EvidenceVault first to 61999. Record:
+- contract address
+- deployment tx
+- finalized status
+- exact source SHA-256
+- explorer source verification
+
+Then deploy ClaimCourt with the exact EvidenceVault address as constructor arg. Record the same evidence.
+
+Update `.env.local` with both real addresses and keep `.env.example` as placeholders.
+Never commit private keys, seed phrases or wallet secrets.
+
+LIVE ECONOMIC LIFECYCLE — REQUIRED
+----------------------------------
+Use fresh public sources and a fresh claim. Produce a real lifecycle:
+
+source URL -> consensus capture -> immutable snapshot id/hash -> claim registration -> snapshot attach -> bounty funding -> adjudication accepted -> show bounty still held while non-final -> protocol finalization -> finalized settlement -> prove payee and amount -> prove second settlement fails -> prove custody balanced.
+
+Also produce separate live cases for CONFIRMED, REFUTED, CONFLICTED and INSUFFICIENT.
+
+For at least one claim:
+- creator and bounty depositor should be distinguishable where practical;
+- a non-creator qualifying evidence submitter should earn the bounty;
+- capture page should be re-fetched or visibly changed after capture if you can safely use a controlled fixture, and the court must still adjudicate the stored snapshot, demonstrating the core immutability property.
+
+Do not reuse old PROVENANCE deployment evidence. Do not reuse transaction hashes from another repository.
+
+DOCUMENTATION / SUBMISSION RECORD
+---------------------------------
+After everything passes, update README/build records with only facts you can prove:
+- final commit
+- both source SHA-256 values
+- both contract addresses
+- deploy tx hashes
+- live lifecycle tx hashes
+- exact test counts
+- GenVM lint results
+- CI run URL/id
+- frontend deployment URL if deployed
+
+Preserve docs/REVIEWER_5X5X5.md as a rationale, not a guarantee. Never write "5/5/5 achieved" unless an external reviewer actually gave it.
+
+GIT
+---
+The final GitHub destination has not been specified in this package. When I tell you the repo, set THIS EXACT EXTRACTED FOLDER'S origin to that repo only. Never guess an owner/repository and never push to a different account.
+
+DEFINITION OF DONE
+------------------
+Done means source + tests + lint + frontend + fresh 61999 deployments + live economic lifecycle + finality proof + green CI + reconciled docs.
+Anything less must be reported as still blocked/incomplete, with the exact blocker.
+
+OPERATIONAL TOOLING NOW INCLUDED
+--------------------------------
+Do not replace these with prose or hand-run equivalents:
+- `python scripts/network_guard.py` — proves the RPC currently reports chain 61999.
+- `python scripts/deploy.py` — deploys EvidenceVault then ClaimCourt, waits FINALIZED,
+  checks execution SUCCESS, verifies byte-identical on-chain source and writes the record.
+- `python scripts/verify_deployment.py` — read-only deployment/source/wiring verification.
+- `python scripts/live.py ...` — executable fresh lifecycle driver and record generator.
+- `pytest tests/integration -q` — read-only checks against the recorded deployment/live proof.
+- `python scripts/check_records.py` — stops source/deployment/live records drifting apart.
+- `python scripts/fee_profile.py --init` / `--check` — mandatory representative fee matrix.
+
+Before submission the final agent MUST replace every incomplete fee-profile cell with a
+measured stable-61999 estimate, run the live lifecycle using intentionally selected public
+fixtures, and commit the resulting records. A missing deployment/live record before that
+stage is normal; claiming completion without those records is not.

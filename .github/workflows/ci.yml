@@ -1,0 +1,56 @@
+name: CI
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  contract:
+    name: contracts -- compile, lint, Direct Mode, invariants
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - run: python -m pip install -U pip
+      - run: python -m pip install -r requirements-dev.txt
+      - run: python -m py_compile contracts/evidence_vault.py contracts/claim_court.py scripts/*.py
+      - run: pytest tests/unit tests/static -q
+      - run: genvm-lint check contracts/evidence_vault.py --json
+      - run: genvm-lint check contracts/claim_court.py --json
+      - run: pytest tests/direct -q
+      - run: python scripts/preflight.py
+      - run: python scripts/check_records.py
+
+  frontend:
+    name: frontend -- lint, types, tests, production build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22.12.0', cache: npm }
+      - run: npm install
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - name: production build
+        env:
+          NEXT_PUBLIC_CHAIN_ID: '61999'
+          NEXT_PUBLIC_EVIDENCE_VAULT: '0x1111111111111111111111111111111111111111'
+          NEXT_PUBLIC_CLAIM_COURT: '0x2222222222222222222222222222222222222222'
+        run: npm run build
+
+  integration-readonly:
+    name: published deployment -- read-only reconciliation
+    if: ${{ hashFiles('docs/deployment.json') != '' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - run: python -m pip install -r requirements-dev.txt
+      - run: python scripts/network_guard.py
+      - run: python scripts/verify_deployment.py
+      - run: pytest tests/integration -q
+      - run: python scripts/fee_profile.py --check

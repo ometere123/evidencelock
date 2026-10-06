@@ -1,0 +1,12 @@
+{
+  "contracts": {
+    "evidence_vault.py": "392e6056b69f290141298bd68251dd649dfe758861fe428064d364746133ee26",
+    "claim_court.py": "3d8d9bca19bb49cc97c8aa4a3547f1135b38bd51ea8f55f3f2167dc93d615b79"
+  },
+  "network": {
+    "chain_id": 61999,
+    "rpc": "https://studio.genlayer.com/api"
+  },
+  "status": "PASS",
+  "problems": []
+}
